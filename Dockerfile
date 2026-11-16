@@ -3,6 +3,11 @@ FROM python:3.12-slim
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
+# Apply the latest OS security patches on top of the base image (fixes CVEs that have a patch available).
+RUN apt-get update \
+    && apt-get upgrade -y --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
+
 # Create an unprivileged user: the container never runs as root.
 RUN groupadd --system --gid 999 app && useradd --system --uid 999 --gid app --no-create-home app
 

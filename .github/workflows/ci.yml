@@ -35,7 +35,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Build image
-        run: docker build -t two-tier-app:${{ github.sha }} .
+        run: docker build --pull -t two-tier-app:${{ github.sha }} .
       - name: Trivy scan (fail on HIGH/CRITICAL with a fix available)
         # Trivy runs from its official image, pinned to a version, instead of a third-party action.
         run: |
