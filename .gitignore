@@ -1,0 +1,32 @@
+# Secrets - NEVER commit
+.env
+*.pem
+*.key
+*.tfvars
+!*.tfvars.example
+credentials
+*.secret.yaml
+!*.example.yaml
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+tfplan
+.terraform.lock.hcl.bak
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+
+# Deploy bookkeeping
+.deploy-history
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
