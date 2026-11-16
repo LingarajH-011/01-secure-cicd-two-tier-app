@@ -37,21 +37,24 @@ jobs:
       - name: Build image
         run: docker build -t two-tier-app:${{ github.sha }} .
       - name: Trivy scan (fail on HIGH/CRITICAL with a fix available)
-        uses: aquasecurity/trivy-action@0.28.0
-        with:
-          image-ref: two-tier-app:${{ github.sha }}
-          format: table
-          exit-code: "1"
-          ignore-unfixed: true
-          severity: HIGH,CRITICAL
+        # Trivy runs from its official image, pinned to a version, instead of a third-party action.
+        run: |
+          docker run --rm \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            -v trivy-cache:/root/.cache/ \
+            aquasec/trivy:0.58.1 image --scanners vuln \
+            --exit-code 1 --ignore-unfixed --severity HIGH,CRITICAL \
+            two-tier-app:${{ github.sha }}
       - name: Trivy report (always saved)
         if: always()
-        uses: aquasecurity/trivy-action@0.28.0
-        with:
-          image-ref: two-tier-app:${{ github.sha }}
-          format: json
-          output: trivy-report.json
-          ignore-unfixed: true
+        run: |
+          docker run --rm \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            -v trivy-cache:/root/.cache/ \
+            -v "$PWD":/out \
+            aquasec/trivy:0.58.1 image --scanners vuln \
+            --ignore-unfixed --format json --output /out/trivy-report.json \
+            two-tier-app:${{ github.sha }}
       - uses: actions/upload-artifact@v4
         if: always()
         with:
